@@ -15,28 +15,28 @@ public class MouseEventsTests {
 
     @Before
     public void setup() {
-        mouse = new Mouse();
+        mouse = new Mouse(new Coordinates(0,0));
         spy = new MouseEventListenerSpy();
         mouse.subscribe(spy);
     }
 
     @Test
     public void press_and_release_left_button_emit_single_click_event() {
-        doClick();
+        doPressAndRelease();
 
         assert (spy.isSingleClick());
     }
 
     @Test
     public void press_and_release_twice_left_button_fast_emit_double_click_event() {
-        doDoubleClick();
+        doDoublePressAndRelease();
 
         assert (spy.isDoubleClick());
     }
 
     @Test
     public void press_and_release_tree_simultaneous_times_left_button_fast_emit_triple_click_event() {
-        doTripleClick();
+        doTriplePressAndRelease();
 
         assert (spy.isTripleClick());
     }
@@ -58,84 +58,21 @@ public class MouseEventsTests {
         assert (spy.isDrop());
     }
 
-    // Double click edge cases
-    @Test
-    public void press_and_release_left_button_once_does_not_emit_double_click_event() {
-        doClick();
 
-        assert (!spy.isDoubleClick());
-    }
-
-    @Test
-    public void press_and_release_left_button_three_times_fast_does_not_emit_double_click_event() {
-        doTripleClick();
-
-        assert (!spy.isDoubleClick());
-    }
-
-    // Triple click edge cases
-    @Test
-    public void press_and_release_left_button_twice_does_not_emit_triple_click_event() {
-        doDoubleClick();
-
-        assert (!spy.isTripleClick());
-    }
-
-    @Test
-    public void press_and_release_left_button_four_times_fast_does_not_emit_triple_click_event() {
-        doTripleClick();
-        doClick();
-
-        assert (!spy.isTripleClick());
-    }
-
-    // Drag edge cases
-    @Test
-    public void press_left_button_and_not_move_does_not_emit_drag_event() {
-        mouse.pressLeftButton(new Date().getTime());
-
-        assert (!spy.isDrag());
-    }
-
-    @Test
-    public void move_without_pressing_left_button_does_not_emit_drag_event() {
-        mouse.move(new Coordinates(10, 0), new Date().getTime());
-
-        assert (!spy.isDrag());
-    }
-
-    // Drop edge cases
-    @Test
-    public void press_left_button_and_move_and_not_release_does_not_emit_drop_event() {
-        mouse.pressLeftButton(new Date().getTime());
-        mouse.move(new Coordinates(10, 0), new Date().getTime());
-
-        assert (!spy.isDrop());
-    }
-
-    @Test
-    public void press_left_button_and_release_without_move_does_not_emit_drop_event() {
-        mouse.pressLeftButton(new Date().getTime());
-        mouse.releaseLeftButton(new Date().getTime());
-
-        assert (!spy.isDrop());
-    }
-
-
-    private void doClick() {
+    private void doPressAndRelease() {
         mouse.pressLeftButton(new Date().getTime());
         mouse.releaseLeftButton(new Date().getTime());
     }
 
-    private void doDoubleClick() {
-        doClick();
-        doClick();
+    private void doDoublePressAndRelease() {
+        doPressAndRelease();
+        doPressAndRelease();
     }
 
-    private void doTripleClick() {
-        doClick();
-        doClick();
-        doClick();
+    private void doTriplePressAndRelease() {
+        doPressAndRelease();
+        doPressAndRelease();
+        doPressAndRelease();
     }
 
 }
