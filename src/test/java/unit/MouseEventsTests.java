@@ -1,7 +1,7 @@
 package unit;
 
 import mouse.Coordinates;
-import mouse.Mouse;
+import mouse.MouseSoftware;
 import org.junit.Before;
 import org.junit.Test;
 import utils.MouseEventListenerSpy;
@@ -10,14 +10,14 @@ import java.util.Date;
 
 public class MouseEventsTests {
 
-    Mouse mouse;
+    MouseSoftware mouse;
     MouseEventListenerSpy spy;
 
     @Before
     public void setup() {
-        mouse = new Mouse(new Coordinates(0,0));
+        mouse = new MouseSoftware(new Coordinates(0,0));
         spy = new MouseEventListenerSpy();
-        mouse.subscribe(spy);
+        mouse.getStateSubject().subscribe(spy::handleMouseEvent);
     }
 
     @Test

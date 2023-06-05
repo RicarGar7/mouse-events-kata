@@ -1,8 +1,8 @@
 package unit;
 
 import mouse.Coordinates;
-import mouse.Mouse;
-import mouse.MouseEventType;
+import mouse.MouseSoftware;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import utils.MouseEventListenerSpy;
@@ -11,16 +11,16 @@ import java.util.Date;
 
 public class MouseEventEgdeCasesTests {
 
-    Mouse mouse;
+    MouseSoftware mouse;
     MouseEventListenerSpy spy;
 
     Coordinates initialPosition = new Coordinates(0, 0);
 
     @Before
     public void setup() {
-        mouse = new Mouse(initialPosition);
+        mouse = new MouseSoftware(new Coordinates(0,0));
         spy = new MouseEventListenerSpy();
-        mouse.subscribe(spy);
+        mouse.getStateSubject().subscribe(spy::handleMouseEvent, spy::handleError, spy::handleCompletion);
     }
 
     // Single click edge cases
@@ -93,10 +93,13 @@ public class MouseEventEgdeCasesTests {
         doPressAndMove();
 
         assert (spy.isDrag());
+        int eventCollectionSizePre = spy.eventReceived.size();
 
         mouse.move(new Coordinates(0, 0), new Date().getTime());
 
-        assert (!spy.isDrag());
+        int eventCollectionSizePost = spy.eventReceived.size();
+
+        Assert.assertEquals(eventCollectionSizePost, eventCollectionSizePre);
         assert (!spy.isSingleClick());
     }
 
@@ -116,17 +119,17 @@ public class MouseEventEgdeCasesTests {
 
         assert (spy.isDrag());
 
+        int eventCollectionSizePre = spy.eventReceived.size();
+
         mouse.move(initialPosition, new Date().getTime());
 
-        assert (!spy.isDrag());
+        int eventCollectionSizePost = spy.eventReceived.size();
+        Assert.assertEquals(eventCollectionSizePost, eventCollectionSizePre);
 
         mouse.releaseLeftButton(new Date().getTime());
 
-        assert (!spy.isDrop());
-
         doPressAndRelease();
 
-        assert (spy.eventReceived == MouseEventType.SingleClick);
         assert (!spy.isDoubleClick());
         assert (spy.isSingleClick());
     }

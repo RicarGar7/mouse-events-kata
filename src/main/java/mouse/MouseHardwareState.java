@@ -1,6 +1,6 @@
 package mouse;
 
-public enum MouseInnerState {
+public enum MouseHardwareState {
     Idle,
     Pressed,
     Moving
